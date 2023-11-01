@@ -1,5 +1,6 @@
 import 'package:calculator/buttons.dart';
 import 'package:flutter/material.dart';
+import 'package:math_expressions/math_expressions.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,8 +34,8 @@ class _CalculatorState extends State<Calculator> {
   var userAnswer = '';
 
   final List<String> buttons = [
-    'C', 'DEL', '%', String.fromCharCode(247),
-    '7', '8', '9', String.fromCharCode(215),
+    'C', 'DEL', '%', String.fromCharCode(247), //division
+    '7', '8', '9', String.fromCharCode(215), //multiplication
     '4', '5', '6', '-',
     '1', '2', '3', '+',
     'ANS', '0', '.', '=',
@@ -89,14 +90,25 @@ class _CalculatorState extends State<Calculator> {
                       } else if (idx == 1) {
                         // delete button
                         return MyButton(
-                          color: Colors.green[300],
-                          textColor: Colors.white,
+                          color: isOperator(buttons[idx]) ? Colors.blue : Colors.blue[50],
+                          textColor: isOperator(buttons[idx]) ? Colors.white : Colors.blue,
                           buttonText: buttons[idx],
                           buttonTapped: () {
                             setState(() {
                               userQuestion = userQuestion.substring(0, userQuestion.length - 1);
                             });
                           },);
+                      } else if (idx == buttons.length - 1) {
+                        // equal button
+                        return MyButton(
+                            color: Colors.blue,
+                            textColor: Colors.white,
+                            buttonText: buttons[idx],
+                            buttonTapped: () {
+                              setState(() {
+                                evaluateEquation();
+                              });
+                        },);
                       } else {
                         return MyButton(
                           color: isOperator(buttons[idx]) ? Colors.blue : Colors.blue[50],
@@ -123,5 +135,19 @@ class _CalculatorState extends State<Calculator> {
       return true;
     }
     return false;
+  }
+
+  void evaluateEquation() {
+    String finalQuestion = userQuestion;
+    finalQuestion = finalQuestion.replaceAll(String.fromCharCode(215), '*');
+    finalQuestion = finalQuestion.replaceAll(String.fromCharCode(247), '/');
+
+    Parser p = Parser();
+    Expression exp = p.parse(finalQuestion);
+
+    ContextModel cm = ContextModel();
+    double ans = exp.evaluate(EvaluationType.REAL, cm);
+
+    userAnswer = ans.toString();
   }
 }
