@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:calculator/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:math_expressions/math_expressions.dart';
@@ -54,7 +55,7 @@ class _CalculatorState extends State<Calculator> {
               height: 100,
               width: MediaQuery.of(context).size.width,
               decoration: const BoxDecoration(
-                image: DecorationImage(image: AssetImage('images/coco.png'), fit: BoxFit.fitWidth, opacity: 0.5,),
+                image: DecorationImage(image: AssetImage('assets/images/coco.png'), fit: BoxFit.fitWidth, opacity: 0.5,),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -118,8 +119,8 @@ class _CalculatorState extends State<Calculator> {
                             textColor: Colors.white,
                             buttonText: buttons[idx],
                             buttonTapped: () {
+                              AudioPlayer().play(AssetSource('audio/cat_meow.mp3'));
                               setState(() {
-                                // TODO: replace this with moving the answer to equation part
                                 pressEvaluateButton();
                               });
                         },);
