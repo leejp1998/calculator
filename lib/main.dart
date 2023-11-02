@@ -51,6 +51,11 @@ class _CalculatorState extends State<Calculator> {
         children: <Widget>[
           Expanded(
             child: Container(
+              height: 100,
+              width: MediaQuery.of(context).size.width,
+              decoration: const BoxDecoration(
+                image: DecorationImage(image: AssetImage('images/coco.png'), fit: BoxFit.fitWidth, opacity: 0.5,),
+              ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
