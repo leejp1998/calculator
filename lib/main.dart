@@ -88,6 +88,7 @@ class _CalculatorState extends State<Calculator> {
                           buttonTapped: () {
                             setState(() {
                               userQuestion = '';
+                              userAnswer = '';
                               isLastTappedOperator = false;
                             });
                           },);
@@ -101,6 +102,7 @@ class _CalculatorState extends State<Calculator> {
                             setState(() {
                               userQuestion = userQuestion.substring(0, userQuestion.length - 1);
                               isLastTappedOperator = equationEndWithOperator(userQuestion);
+                              evaluateEquation();
                             });
                           },);
                       } else if (idx == buttons.length - 1) {
@@ -111,6 +113,7 @@ class _CalculatorState extends State<Calculator> {
                             buttonText: buttons[idx],
                             buttonTapped: () {
                               setState(() {
+                                // TODO: replace this with moving the answer to equation part
                                 evaluateEquation();
                               });
                         },);
@@ -131,6 +134,7 @@ class _CalculatorState extends State<Calculator> {
                               }
                               userQuestion += buttons[idx];
                             });
+                            evaluateEquation();
                           },);
                       }
                     },
@@ -151,6 +155,13 @@ class _CalculatorState extends State<Calculator> {
   }
 
   void evaluateEquation() {
+    if (equationEndWithOperator(userQuestion)) {
+      setState(() {
+        userAnswer = '';
+      });
+      return;
+    }
+
     String finalQuestion = userQuestion;
     finalQuestion = finalQuestion.replaceAll(String.fromCharCode(215), '*');
     finalQuestion = finalQuestion.replaceAll(String.fromCharCode(247), '/');
