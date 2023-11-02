@@ -181,7 +181,11 @@ class _CalculatorState extends State<Calculator> {
     ContextModel cm = ContextModel();
     double ans = exp.evaluate(EvaluationType.REAL, cm);
 
-    userAnswer = ans.toString();
+    if (ans == ans.roundToDouble()) {
+      userAnswer = ans.round().toString();
+    } else {
+      userAnswer = ans.toString();
+    }
   }
   
   bool equationEndWithOperator(String equation) {
