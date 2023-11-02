@@ -33,6 +33,7 @@ class _CalculatorState extends State<Calculator> {
   var userQuestion = '';
   var userAnswer = '';
   bool isLastTappedOperator = false;
+  bool isLastTappedEvaluate = false;
 
   final List<String> buttons = [
     'C', 'DEL', '%', String.fromCharCode(247), //division
@@ -58,7 +59,7 @@ class _CalculatorState extends State<Calculator> {
                     // equation
                     padding: const EdgeInsets.all(20),
                     alignment: Alignment.centerRight,
-                    child: Text(userQuestion, style: TextStyle(fontSize: 30, color: Colors.blueGrey[900]),),
+                    child: Text(userQuestion, style: TextStyle(fontSize: 30, color: isLastTappedEvaluate ? Colors.indigo[900] : Colors.blueGrey[900]),),
                   ),
                   Container(
                     // answer
@@ -114,7 +115,7 @@ class _CalculatorState extends State<Calculator> {
                             buttonTapped: () {
                               setState(() {
                                 // TODO: replace this with moving the answer to equation part
-                                evaluateEquation();
+                                pressEvaluateButton();
                               });
                         },);
                       } else {
@@ -124,12 +125,15 @@ class _CalculatorState extends State<Calculator> {
                           buttonText: buttons[idx],
                           buttonTapped: () {
                             setState(() {
-                              if (!isOperator(buttons[idx])) {
+                              if (!isOperator(buttons[idx]) && isLastTappedEvaluate) {
+                                userQuestion = '';
                                 isLastTappedOperator = false;
+                              } else if (!isOperator(buttons[idx])) {
+                                isLastTappedOperator = false;
+                              } else if (isOperator(buttons[idx]) && isLastTappedOperator) {
+                                userQuestion = userQuestion.substring(0, userQuestion.length - 1);
+                                isLastTappedOperator = true;
                               } else {
-                                if (isLastTappedOperator) {
-                                  userQuestion = userQuestion.substring(0, userQuestion.length - 1);
-                                }
                                 isLastTappedOperator = true;
                               }
                               userQuestion += buttons[idx];
@@ -155,6 +159,11 @@ class _CalculatorState extends State<Calculator> {
   }
 
   void evaluateEquation() {
+    if (isLastTappedEvaluate) {
+      setState(() {
+        isLastTappedEvaluate = false;
+      });
+    }
     if (equationEndWithOperator(userQuestion)) {
       setState(() {
         userAnswer = '';
@@ -180,5 +189,13 @@ class _CalculatorState extends State<Calculator> {
         equation.endsWith(String.fromCharCode(215)) ||
         equation.endsWith('-') ||
         equation.endsWith('+');
+  }
+
+  void pressEvaluateButton() {
+    setState(() {
+      userQuestion = userAnswer;
+      userAnswer = '';
+      isLastTappedEvaluate = true;
+    });
   }
 }
